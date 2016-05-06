@@ -6,5 +6,3 @@ pub mod parser;
 pub mod node;
 pub mod astar;
 pub mod heuristic;
-
-
