@@ -66,13 +66,15 @@ fn main() {
         if !start.is_solvable() { println!("{}", Yellow.bold().paint("This puzzle is not solvable.")); }
         else {
             let goal = node::Goal::new(start.len);
-            let mut result = String::new();
-            for node in astar::astar(&mut start, &goal, &heuristic).unwrap()
+            let mut result_string = String::new();
+            let results = astar::astar(&mut start, &goal, &heuristic).unwrap();
+            for node in &(results.path)
             {
                 let node_str = format!("{}\n", node);
-                result.push_str(&node_str);
+                result_string.push_str(&node_str);
             }
-            write_to_file(&result)
+            write_to_file(&result_string);
+            println!("path length: {}, opened states: {}, max_states: {}", results.path.len(), results.total_states, results.max_states)
         }
     }
 }
