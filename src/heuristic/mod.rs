@@ -14,18 +14,14 @@ impl Heuristic {
     fn manhattan(node: &Node, goal: &Goal) -> i32
     {
         let mut score: i32 = 0;
-        for i in 0..node.len * node.len
-        {
-            let square = node.state[i];
-            if let Some(&(x, y)) = goal.map.get(&square) {
-                score += if square == 0 { 0 }
-                else {
-                    (x as i32 - (i % node.len) as i32).abs()
-                    + (y as i32 - (i / node.len) as i32).abs()
-                }
-            }
-        }
-        score
+        node.state.iter().enumerate().fold(0, |score, (i, &square)| 
+                                   score + if let Some(&(x, y)) = goal.map.get(&square) {
+                                       if square == 0 { 0 }
+                                       else {
+                                           (x as i32 - (i % node.len) as i32).abs()
+                                               + (y as i32 - (i / node.len) as i32).abs()
+                                       }
+                                    } else { 0 })
     }
 
     fn linear(node: &Node, goal: &Goal) -> i32
@@ -84,7 +80,7 @@ impl Heuristic {
             let filtered: Vec<_> = node.state.iter().enumerate()
                                             .filter(|&(index, _)| index % node.len == col)
                                             .map(|(_, v)| *v)
-                                            .collect();
+                                            .collect::<_>();
             for (i, square) in filtered.iter().enumerate()
             {
                 if let Some(&(x, y)) = goal.map.get(&square) {
