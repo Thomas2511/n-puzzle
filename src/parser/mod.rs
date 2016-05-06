@@ -2,6 +2,7 @@ extern crate regex;
 
 use node::Node;
 
+/// Remove the comments in the file
 pub fn remove_comments(lines: Vec<String>) -> Vec<String>
 {
     let rgx = regex::Regex::new(r"(#.*)$|(^#.*$)").unwrap();
@@ -11,6 +12,7 @@ pub fn remove_comments(lines: Vec<String>) -> Vec<String>
         .collect()
 }
 
+// Converts a string of lines to a Node
 pub fn to_node(lines: Vec<String>) -> Node
 {
     let len: usize = match lines[0].parse::<usize>() {

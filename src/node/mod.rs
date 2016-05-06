@@ -5,8 +5,6 @@ use std::fmt;
 
 use std::cmp::Ordering;
 
-use heuristic::Heuristic;
-
 #[derive(Clone)]
 pub struct Node
 {
@@ -88,6 +86,7 @@ impl Node
         Node { state: v, len: self.len, score: 0 }
     }
 
+    /// Get all the possible neighbours of a Node
     pub fn get_neighbour(&self) -> Vec<Node>
     {
         let mut res = Vec::with_capacity(4);
@@ -105,11 +104,6 @@ impl Node
         if ((x + 1) % size) > 0 { res.push(self.swap(x, x + 1)); }
         if (x + size) < (size*size) { res.push(self.swap(x, x + size)); }
         res
-    }
-
-    pub fn get_score(&self, goal: &Goal, h: &Heuristic) -> i32
-    {
-        h.get_score(self, goal) 
     }
 
     fn get_linear(&self) -> Vec<usize>
@@ -135,6 +129,7 @@ impl Node
         linear
     }
 
+    /// Checks if a node is solvable
     pub fn is_solvable(&self) -> bool
     {
         let linear: Vec<usize> = self.get_linear();
@@ -150,6 +145,7 @@ impl Node
 
 impl Goal
 {
+    // Creates a new Goal
     pub fn new (size: usize) -> Goal
     {
         let mut tab = vec![0; size*size];

@@ -85,6 +85,7 @@ impl Heuristic {
         score
     }
 
+    /// Transform a string to an Heuristic
     pub fn str_to_heuristic(s: &str) -> Option<Heuristic>
     {
         match s.to_ascii_lowercase().as_ref() {
@@ -95,6 +96,7 @@ impl Heuristic {
         }
     }
 
+    /// Get the heuristic's score of a node relative to a goal
     pub fn get_score(&self, node: &Node, goal: &Goal) -> i32
     {
         match *self {

@@ -1,3 +1,5 @@
+//! All astar related functions
+
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
 
@@ -16,7 +18,7 @@ enum Set
     Opened
 }
 
-pub fn reconstruct_path(came_from: &HashMap<Node, Node>, start: &Node) -> Vec<Node>
+fn reconstruct_path(came_from: &HashMap<Node, Node>, start: &Node) -> Vec<Node>
 {
     let mut total_path = vec![start.clone()];
     let mut current = start;
@@ -29,6 +31,7 @@ pub fn reconstruct_path(came_from: &HashMap<Node, Node>, start: &Node) -> Vec<No
     total_path
 }
 
+/// Computes the path from the start to the goal using the astar strategy
 pub fn astar(start: &mut Node, goal: &Goal, heuristic: &Heuristic) -> Option <Vec<Node>>
 {
     let mut closed_set : Vec<Node> = Vec::new();
