@@ -30,4 +30,3 @@ args:
         long: file
         multiple: true
         takes_value: true
-        required: true

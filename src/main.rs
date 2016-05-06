@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate clap;
 extern crate ansi_term;
+extern crate rand;
 
 extern crate n_puzzle;
 
@@ -13,6 +14,7 @@ use std::error::Error;
 use std::io::prelude::*;
 use std::fs::File;
 use std::path::Path;
+use rand::{thread_rng, Rng};
 
 use n_puzzle::{node, astar, parser};
 use n_puzzle::heuristic::Heuristic;
@@ -44,6 +46,42 @@ fn write_to_file(result: &String, filename: &String) {
     }
 }
 
+fn random_state() -> node::Node {
+    let mut start = node::Goal::new(3).node;
+    let mut rng = thread_rng();
+    let n: u32 = rng.gen_range(1, 1000);
+    for _ in 0..n {
+        loop {
+            if let Some(exists) = start.get_neighbour().get(rng.gen_range(0, 4)) {
+                start = exists.clone();
+                break ;
+            }
+        }
+    }
+    println!("Puzzle starting state:\n{}", start);
+    start
+}
+
+fn solve_puzzle(mut start: node::Node, heuristic: &Heuristic, search: &str)
+{
+    if !start.is_solvable() { println!("{}", Yellow.bold().paint("This puzzle is not solvable.")); }
+    else {
+        let goal = node::Goal::new(start.len);
+        let mut result_string = String::new();
+        let results = astar::astar(&mut start, &goal, &heuristic, &search).unwrap();
+        for node in &(results.path)
+        {
+            let node_str = format!("{}\n", node);
+            result_string.push_str(&node_str);
+        }
+        println!("Total Number of opened states: {}", results.total_states);
+        println!("Maximum number of states ever represented in memory: {}", results.max_states);
+        println!("Number of moves required: {}", results.path.len());
+        println!("Ordered sequence of states to the solution are to be written to solution.txt ...\n");
+        write_to_file(&result_string, &("solution.txt".to_string()))
+    }
+}
+
 fn main() {
     let yaml = load_yaml!("cli.yml");
     let options = clap::App::from_yaml(yaml).get_matches();
@@ -51,24 +89,22 @@ fn main() {
     let heuristic = Heuristic::str_to_heuristic(options
                                                 .value_of("heuristic")
                                                 .unwrap_or(DEFAULT_HEURISTIC)).unwrap();
-    for file in options.values_of("file").unwrap().collect::<Vec<_>>() {
-        let result: String = read_file(&file.to_string());
-        let vec: Vec<String> = result.split("\n")
-            .map(|s| s.to_string())
-            .collect();
-        let mut start = parser::to_node(parser::remove_comments(vec));
-        if !start.is_solvable() { println!("{}", Yellow.bold().paint("This puzzle is not solvable.")); }
-        else {
-            let goal = node::Goal::new(start.len);
-            let mut result_string = String::new();
-            let results = astar::astar(&mut start, &goal, &heuristic, &search).unwrap();
-            for node in &(results.path)
-            {
-                let node_str = format!("{}\n", node);
-                result_string.push_str(&node_str);
-            }
-            write_to_file(&result_string);
-            println!("path length: {}, opened states: {}, max_states: {}", results.path.len(), results.total_states, results.max_states)
+    let files: Vec<_> = match options.values_of("file") {
+        Some(f) => f.collect::<Vec<_>>(),
+        None => Vec::new()
+    };
+    if files.is_empty() {
+        let start = random_state();
+        solve_puzzle(start, &heuristic, &search)
+    }
+    else {
+        for file in files {
+            let result: String = read_file(&file.to_string());
+            let vec: Vec<String> = result.split("\n")
+                .map(|s| s.to_string())
+                .collect();
+            let start = parser::to_node(parser::remove_comments(vec));
+            solve_puzzle(start, &heuristic, &search)
         }
     }
 }
