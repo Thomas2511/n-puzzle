@@ -31,7 +31,7 @@ fn reconstruct_path(came_from: &HashMap<Node, Node>, start: &Node) -> Vec<Node>
 }
 
 /// Computes the path from the start to the goal using the astar strategy
-pub fn astar(start: &mut Node, goal: &Goal, heuristic: &Heuristic) -> Option <Vec<Node>>
+pub fn astar(start: &mut Node, goal: &Goal, heuristic: &Heuristic, search: &str) -> Option <Vec<Node>>
 {
     let mut closed_set : Vec<Node> = Vec::new();
     let mut opened_set : BinaryHeap<Node> = BinaryHeap::new();
@@ -69,7 +69,11 @@ pub fn astar(start: &mut Node, goal: &Goal, heuristic: &Heuristic) -> Option <Ve
                         {
                 //            println!("match find = {}", match_s_time.to(PreciseTime::now()));
                 //            let match_bis = PreciseTime::now();
-                            neighbour.score = heuristic.get_score(&neighbour, goal);
+                            neighbour.score = match search {
+                                "greedy" => heuristic.get_score(&neighbour, goal),
+                                "uniform" => tentative_g_score + heuristic.get_score(&neighbour, goal),
+                                _ => panic!("Search type not defined")
+                            };
                             came_from.insert(neighbour.clone(), current.clone());
                             g_score.insert(neighbour.clone(), tentative_g_score);
                             opened_set.push(neighbour.clone());
@@ -80,7 +84,11 @@ pub fn astar(start: &mut Node, goal: &Goal, heuristic: &Heuristic) -> Option <Ve
                         {
                 //            println!("match find = {}", match_s_time.to(PreciseTime::now()));
                 //            let match_bis = PreciseTime::now();
-                            neighbour.score = heuristic.get_score(&neighbour, goal);
+                            neighbour.score = match search {
+                                "greedy" => heuristic.get_score(&neighbour, goal),
+                                "uniform" => tentative_g_score + heuristic.get_score(&neighbour, goal),
+                                _ => panic!("Search type not defined")
+                            };
                             came_from.insert(neighbour.clone(), current.clone());
                             g_score.insert(neighbour.clone(), tentative_g_score);
                 //            println!("Some Clone = {}", match_bis.to(PreciseTime::now()));

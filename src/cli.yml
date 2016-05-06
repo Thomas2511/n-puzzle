@@ -7,6 +7,14 @@ author:
   - afaucher17 <afaucher17@users.noreply.github.com>
 
 args:
+    - search:
+        help: Greedy or uniform cost search.
+        short: s
+        long: search
+        takes_value: true
+        possible_values:
+          - greedy
+          - uniform
     - heuristic:
         help: Defines the heuristic.
         short: h
