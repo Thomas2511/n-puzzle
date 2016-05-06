@@ -8,7 +8,7 @@ use node::Goal;
 
 use heuristic::Heuristic;
 
-use time::PreciseTime;
+//use time::PreciseTime;
 
 enum Set
 {

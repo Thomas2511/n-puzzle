@@ -12,8 +12,6 @@ use n_puzzle::heuristic::Heuristic;
 use ansi_term::Colour::*;
 
 use std::error::Error;
-use std::hash::{Hash, Hasher, SipHasher};
-use std::env;
 use std::io::prelude::*;
 use std::fs::File;
 use std::path::Path;
@@ -30,12 +28,6 @@ fn read_files(filename: &String) -> String {
         Err(why) => panic!("Could not read {}: {}", display, Error::description(&why)),
         Ok(_) => buffer,
     }
-}
-
-fn hash<T: Hash>(t: &T) -> u64 {
-    let mut s = SipHasher::new();
-    t.hash(&mut s);
-    s.finish()
 }
 
 fn main() {

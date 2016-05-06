@@ -7,13 +7,11 @@ pub enum Heuristic
     Manhattan,
     Linear,
     Xy,
-    // Your new heuristic
 }
 
 impl Heuristic {
     fn manhattan(node: &Node, goal: &Goal) -> i32
     {
-        let mut score: i32 = 0;
         node.state.iter().enumerate().fold(0, |score, (i, &square)| 
                                    score + if let Some(&(x, y)) = goal.map.get(&square) {
                                        if square == 0 { 0 }
@@ -65,15 +63,12 @@ impl Heuristic {
     {
         let mut score: i32 = 0;
         for (line, chunk) in node.state.chunks(node.len).enumerate()
-        {
-            for (i, square) in chunk.iter().enumerate()
-            {
-                if let Some(&(x, y)) = goal.map.get(&square) {
-                    score += 
-                        if *square != 0 && y == line { ((x as i32 - i as i32) as i32).abs() }
-                        else { 0 }
-                }
-            }
+        {  
+            score += chunk.iter().enumerate().fold(0, |acc, (i, &square)|
+                                          acc + if let Some(&(x, y)) = goal.map.get(&square) {
+                                              if square != 0 && y == line { ((x as i32 - i as i32)).abs() }
+                                              else { 0 }
+                                          } else { 0 })
         }
         for col in 0..node.len
         {
@@ -81,14 +76,11 @@ impl Heuristic {
                                             .filter(|&(index, _)| index % node.len == col)
                                             .map(|(_, v)| *v)
                                             .collect::<_>();
-            for (i, square) in filtered.iter().enumerate()
-            {
-                if let Some(&(x, y)) = goal.map.get(&square) {
-                    score +=
-                        if *square != 0 && x == col { ((y as i32 - i as i32) as i32).abs() }
+            score += filtered.iter().enumerate().fold(0, |acc, (i, &square)|
+                acc + if let Some(&(x, y)) = goal.map.get(&square) {
+                        if square != 0 && x == col { ((y as i32 - i as i32)).abs() }
                         else { 0 }
-                }
-            }
+                } else { 0 })
         }
         score
     }
@@ -99,7 +91,7 @@ impl Heuristic {
             "manhattan" => Some(Heuristic::Manhattan),
             "linear" => Some(Heuristic::Linear),
             "xy" => Some(Heuristic::Xy),
-            _ => None
+            _ => None,
         }
     }
 
