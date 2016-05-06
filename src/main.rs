@@ -45,10 +45,12 @@ fn main() {
         let mut start = parser::to_node(parser::remove_comments(vec));
         if !start.is_solvable() { println!("{}", Yellow.bold().paint("This puzzle is not solvable.")); }
         else { let goal = node::Goal::new(start.len);
-            for node in astar::astar(&mut start, &goal, &heuristic).unwrap()
+            let results = astar::astar(&mut start, &goal, &heuristic).unwrap();
+            for node in &(results.path)
             {
                 println!("{}", node)
             }
+            println!("path length: {}, opened states: {}, max_states: {}", results.path.len(), results.total_states, results.max_states)
         }
     }
 }
