@@ -22,9 +22,8 @@ fn reconstruct_path(came_from: &HashMap<Node, Node>, start: &Node) -> Vec<Node>
 {
     let mut total_path = vec![start.clone()];
     let mut current = start;
-    loop
+    while let true = came_from.contains_key(current)
     {
-        if !came_from.contains_key(current) { break }
         current = came_from.get(current).unwrap();
         total_path.push(current.clone())
     }
