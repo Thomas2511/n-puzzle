@@ -1,3 +1,4 @@
+//! Parser related functions
 extern crate regex;
 
 use node::Node;
@@ -12,7 +13,7 @@ pub fn remove_comments(lines: Vec<String>) -> Vec<String>
         .collect()
 }
 
-// Converts a string of lines to a Node
+/// Converts a string of lines to a Node
 pub fn to_node(lines: Vec<String>) -> Node
 {
     let len: usize = match lines[0].parse::<usize>() {

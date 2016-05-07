@@ -1,7 +1,6 @@
 #[macro_use]
 extern crate clap;
 extern crate ansi_term;
-extern crate rand;
 
 extern crate n_puzzle;
 
@@ -14,7 +13,6 @@ use std::error::Error;
 use std::io::prelude::*;
 use std::fs::File;
 use std::path::Path;
-use rand::{thread_rng, Rng};
 
 use n_puzzle::{node, astar, parser};
 use n_puzzle::heuristic::Heuristic;
@@ -46,22 +44,6 @@ fn write_to_file(result: &String, filename: &String) {
     }
 }
 
-fn random_state() -> node::Node {
-    let mut start = node::Goal::new(3).node;
-    let mut rng = thread_rng();
-    let n: u32 = rng.gen_range(1, 1000);
-    for _ in 0..n {
-        loop {
-            if let Some(exists) = start.get_neighbour().get(rng.gen_range(0, 4)) {
-                start = exists.clone();
-                break ;
-            }
-        }
-    }
-    println!("Puzzle starting state:\n{}", start);
-    start
-}
-
 fn solve_puzzle(mut start: node::Node, heuristic: &Heuristic, search: &str)
 {
     if !start.is_solvable() { println!("{}", Yellow.bold().paint("This puzzle is not solvable.")); }
@@ -76,7 +58,7 @@ fn solve_puzzle(mut start: node::Node, heuristic: &Heuristic, search: &str)
         }
         println!("Total Number of opened states: {}", results.total_states);
         println!("Maximum number of states ever represented in memory: {}", results.max_states);
-        println!("Number of moves required: {}", results.path.len());
+        println!("Number of moves required: {}", results.path.len() - 1);
         println!("Ordered sequence of states to the solution are to be written to solution.txt ...\n");
         write_to_file(&result_string, &("solution.txt".to_string()))
     }
@@ -94,7 +76,7 @@ fn main() {
         None => Vec::new()
     };
     if files.is_empty() {
-        let start = random_state();
+        let start = node::Node::random_node(3);
         solve_puzzle(start, &heuristic, &search)
     }
     else {

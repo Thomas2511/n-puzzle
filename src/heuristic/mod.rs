@@ -1,3 +1,4 @@
+//! All heuristic related functions
 use std::ascii::AsciiExt;
 
 use node::{Node, Goal};

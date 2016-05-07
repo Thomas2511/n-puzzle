@@ -1,9 +1,11 @@
-
+//! Node and Goal structs with their related functions
 use std::hash::{Hash, Hasher};
 use std::collections::HashMap;
 use std::fmt;
-
 use std::cmp::Ordering;
+
+use rand::{Rng, thread_rng};
+
 
 #[derive(Clone)]
 pub struct Node
@@ -129,6 +131,21 @@ impl Node
         linear
     }
 
+    /// Generate a random state
+    pub fn random_node(size: usize) -> Node {
+        let mut current = Goal::new(size).node;
+        let mut rng = thread_rng();
+        let n: u32 = rng.gen_range(1, 1000);
+        for _ in 0..n {
+            let neighbours = current.get_neighbour();
+            if let Some(node) = neighbours.get(rng.gen_range(0, neighbours.len())) { 
+                current = node.clone();
+            }
+        }
+        println!("Puzzle starting state:\n{}", current);
+        current
+    }
+
     /// Checks if a node is solvable
     pub fn is_solvable(&self) -> bool
     {
@@ -145,7 +162,7 @@ impl Node
 
 impl Goal
 {
-    // Creates a new Goal
+    /// Creates a new Goal
     pub fn new (size: usize) -> Goal
     {
         let mut tab = vec![0; size*size];

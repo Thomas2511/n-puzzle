@@ -10,8 +10,6 @@ use node::Goal;
 
 use heuristic::Heuristic;
 
-//use time::PreciseTime;
-
 enum Set
 {
     Closed,
